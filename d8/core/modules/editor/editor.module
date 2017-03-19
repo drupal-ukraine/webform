@@ -168,13 +168,12 @@ function editor_form_filter_format_form_alter(&$form, FormStateInterface $form_s
 
   // Add editor-specific validation and submit handlers.
   if ($editor) {
-    /** @var $plugin \Drupal\editor\Plugin\EditorPluginInterface */
     $plugin = $manager->createInstance($editor->getEditor());
     $settings_form = array();
-    $settings_form['#element_validate'][] = array($plugin, 'validateConfigurationForm');
-    $form['editor']['settings']['subform'] = $plugin->buildConfigurationForm($settings_form, $form_state);
+    $settings_form['#element_validate'][] = array($plugin, 'settingsFormValidate');
+    $form['editor']['settings']['subform'] = $plugin->settingsForm($settings_form, $form_state, $editor);
     $form['editor']['settings']['subform']['#parents'] = array('editor', 'settings');
-    $form['actions']['submit']['#submit'][] = array($plugin, 'submitConfigurationForm');
+    $form['actions']['submit']['#submit'][] = array($plugin, 'settingsFormSubmit');
   }
 
   $form['#validate'][] = 'editor_form_filter_admin_format_validate';
@@ -520,8 +519,8 @@ function editor_file_download($uri) {
   if ($file->isPermanent()) {
     $referencing_entity_is_accessible = FALSE;
     $references = empty($usage_list['editor']) ? [] : $usage_list['editor'];
-    foreach ($references as $entity_type => $entity_ids) {
-      $referencing_entities = entity_load_multiple($entity_type, $entity_ids);
+    foreach ($references as $entity_type => $entity_ids_usage_count) {
+      $referencing_entities = entity_load_multiple($entity_type, array_keys($entity_ids_usage_count));
       /** @var \Drupal\Core\Entity\EntityInterface $referencing_entity */
       foreach ($referencing_entities as $referencing_entity) {
         if ($referencing_entity->access('view', NULL, TRUE)->isAllowed()) {

@@ -36,7 +36,6 @@ class ConfigInstallProfileOverrideTest extends WebTestBase {
         'requirements_warning' => 172800,
         'requirements_error' => 1209600,
       ),
-      'logging' => 1,
     );
     // The expected active configuration altered by the install profile.
     $expected_profile_data = array(
@@ -44,7 +43,6 @@ class ConfigInstallProfileOverrideTest extends WebTestBase {
         'requirements_warning' => 259200,
         'requirements_error' => 1209600,
       ),
-      'logging' => 1,
     );
     $expected_profile_data['_core']['default_config_hash'] = Crypt::hashBase64(serialize($expected_profile_data));
 

@@ -197,7 +197,6 @@ class DateTimeTest extends WebTestBase {
     $this->drupalGet('admin/structure/types/manage/page_with_date/form-display');
     $edit = array(
       'fields[field_dt][type]' => 'datetime_datelist',
-      'fields[field_dt][region]' => 'content',
     );
     $this->drupalPostForm('admin/structure/types/manage/page_with_date/form-display', $edit, t('Save'));
     $this->drupalLogout();

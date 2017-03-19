@@ -36,8 +36,6 @@ class ExposedFormTest extends ViewTestBase {
   protected function setUp() {
     parent::setUp();
 
-    $this->enableViewsTestModule();
-
     $this->drupalCreateContentType(array('type' => 'article'));
 
     // Create some random nodes.
@@ -50,10 +48,10 @@ class ExposedFormTest extends ViewTestBase {
    * Tests the submit button.
    */
   public function testSubmitButton() {
-    // Test the submit button value defaults to 'Filter'.
+    // Test the submit button value defaults to 'Apply'.
     $this->drupalGet('test_exposed_form_buttons');
     $this->assertResponse(200);
-    $this->helperButtonHasLabel('edit-submit-test-exposed-form-buttons', t('Filter'));
+    $this->helperButtonHasLabel('edit-submit-test-exposed-form-buttons', t('Apply'));
 
     // Rename the label of the submit button.
     $view = Views::getView('test_exposed_form_buttons');
@@ -68,7 +66,7 @@ class ExposedFormTest extends ViewTestBase {
     $this->drupalGet('test_exposed_form_buttons');
     $this->helperButtonHasLabel('edit-submit-test-exposed-form-buttons', $expected_label);
 
-    // Make sure an empty label uses the default 'Filter' button value too.
+    // Make sure an empty label uses the default 'Apply' button value too.
     $view = Views::getView('test_exposed_form_buttons');
     $view->setDisplay();
 
@@ -77,9 +75,9 @@ class ExposedFormTest extends ViewTestBase {
     $view->display_handler->setOption('exposed_form', $exposed_form);
     $view->save();
 
-    // Make sure the submit button label shows 'Filter'.
+    // Make sure the submit button label shows 'Apply'.
     $this->drupalGet('test_exposed_form_buttons');
-    $this->helperButtonHasLabel('edit-submit-test-exposed-form-buttons', t('Filter'));
+    $this->helperButtonHasLabel('edit-submit-test-exposed-form-buttons', t('Apply'));
   }
 
   /**
@@ -296,7 +294,7 @@ class ExposedFormTest extends ViewTestBase {
 
     $this->drupalGet('test_exposed_form_buttons');
     $this->assertResponse(200);
-    $this->helperButtonHasLabel('edit-submit-test-exposed-form-buttons', t('Filter'));
+    $this->helperButtonHasLabel('edit-submit-test-exposed-form-buttons', t('Apply'));
 
     // Ensure that no results are displayed.
     $rows = $this->xpath("//div[contains(@class, 'views-row')]");
@@ -398,25 +396,6 @@ class ExposedFormTest extends ViewTestBase {
    */
   protected function getExpectedExposedFormId(ViewExecutable $view) {
     return Html::cleanCssIdentifier('views-exposed-form-' . $view->storage->id() . '-' . $view->current_display);
-  }
-
-  /**
-   * Tests a view which is rendered after a form with a validation error.
-   */
-  public function testFormErrorWithExposedForm() {
-    $this->drupalGet('views_test_data_error_form_page');
-    $this->assertResponse(200);
-    $form = $this->cssSelect('form.views-exposed-form');
-    $this->assertTrue($form, 'The exposed form element was found.');
-    $this->assertRaw(t('Filter'), 'Ensure the exposed form is rendered before submitting the normal form.');
-    $this->assertRaw('<div class="views-row">', 'Views result shown.');
-
-    $this->drupalPostForm(NULL, array(), t('Submit'));
-    $this->assertResponse(200);
-    $form = $this->cssSelect('form.views-exposed-form');
-    $this->assertTrue($form, 'The exposed form element was found.');
-    $this->assertRaw(t('Filter'), 'Ensure the exposed form is rendered after submitting the normal form.');
-    $this->assertRaw('<div class="views-row">', 'Views result shown.');
   }
 
 }

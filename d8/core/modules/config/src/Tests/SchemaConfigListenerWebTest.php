@@ -18,7 +18,7 @@ class SchemaConfigListenerWebTest extends WebTestBase {
   public static $modules = array('config_test');
 
   /**
-   * Tests \Drupal\Core\Config\Development\ConfigSchemaChecker.
+   * Tests \Drupal\Core\Config\Testing\ConfigSchemaChecker.
    */
   public function testConfigSchemaChecker() {
     $this->drupalLogin($this->drupalCreateUser(['administer site configuration']));

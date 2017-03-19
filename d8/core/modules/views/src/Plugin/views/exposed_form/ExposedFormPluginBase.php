@@ -26,7 +26,7 @@ abstract class ExposedFormPluginBase extends PluginBase implements CacheableDepe
    */
   protected function defineOptions() {
     $options = parent::defineOptions();
-    $options['submit_button'] = array('default' => $this->t('Filter'));
+    $options['submit_button'] = array('default' => $this->t('Apply'));
     $options['reset_button'] = array('default' => FALSE);
     $options['reset_button_label'] = array('default' => $this->t('Reset'));
     $options['exposed_sorts_label'] = array('default' => $this->t('Sort by'));
@@ -133,12 +133,6 @@ abstract class ExposedFormPluginBase extends PluginBase implements CacheableDepe
     }
 
     $form = \Drupal::formBuilder()->buildForm('\Drupal\views\Form\ViewsExposedForm', $form_state);
-    $errors = $form_state->getErrors();
-
-    // If the exposed form had errors, do not build the view.
-    if (!empty($errors)) {
-      $this->view->build_info['abort'] = TRUE;
-    }
 
     if (!$this->view->display_handler->displaysExposed() || (!$block && $this->view->display_handler->getOption('exposed_block'))) {
       return array();

@@ -48,7 +48,6 @@ class TourCacheTagsTest extends PageCacheTagsTestBase {
     $expected_tags = [
       'config:tour.tour.tour-test',
       'config:user.role.anonymous',
-      'http_response',
       'rendered',
     ];
     $this->verifyPageCache($url, 'HIT', $expected_tags);
@@ -69,7 +68,6 @@ class TourCacheTagsTest extends PageCacheTagsTestBase {
     // Verify a cache hit.
     $expected_tags = [
       'config:user.role.anonymous',
-      'http_response',
       'rendered',
     ];
     $this->verifyPageCache($url, 'HIT', $expected_tags);

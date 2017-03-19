@@ -28,7 +28,13 @@ class ModerationLocaleTest extends ModerationStateTestBase {
     $this->drupalLogin($this->rootUser);
 
     // Enable moderation on Article node type.
-    $this->createContentTypeFromUi('Article', 'article', TRUE);
+    $this->createContentTypeFromUi(
+      'Article',
+      'article',
+      TRUE,
+      ['draft', 'published', 'archived'],
+      'draft'
+    );
 
     // Add French language.
     $edit = [
@@ -97,9 +103,9 @@ class ModerationLocaleTest extends ModerationStateTestBase {
     $french_node = $english_node->getTranslation('fr');
     $this->assertEqual('French node', $french_node->label());
 
-    $this->assertEqual($english_node->moderation_state->value, 'published');
+    $this->assertEqual($english_node->moderation_state->target_id, 'published');
     $this->assertTrue($english_node->isPublished());
-    $this->assertEqual($french_node->moderation_state->value, 'draft');
+    $this->assertEqual($french_node->moderation_state->target_id, 'draft');
     $this->assertFalse($french_node->isPublished());
 
     // Create another article with its translation. This time we will publish
@@ -127,9 +133,9 @@ class ModerationLocaleTest extends ModerationStateTestBase {
     $this->assertText(t('Article Translated node has been updated.'));
     $english_node = $this->drupalGetNodeByTitle('Another node', TRUE);
     $french_node = $english_node->getTranslation('fr');
-    $this->assertEqual($french_node->moderation_state->value, 'published');
+    $this->assertEqual($french_node->moderation_state->target_id, 'published');
     $this->assertTrue($french_node->isPublished());
-    $this->assertEqual($english_node->moderation_state->value, 'draft');
+    $this->assertEqual($english_node->moderation_state->target_id, 'draft');
     $this->assertFalse($english_node->isPublished());
 
     // Now check that we can create a new draft of the translation.
@@ -140,7 +146,7 @@ class ModerationLocaleTest extends ModerationStateTestBase {
     $this->assertText(t('Article New draft of translated node has been updated.'));
     $english_node = $this->drupalGetNodeByTitle('Another node', TRUE);
     $french_node = $english_node->getTranslation('fr');
-    $this->assertEqual($french_node->moderation_state->value, 'published');
+    $this->assertEqual($french_node->moderation_state->target_id, 'published');
     $this->assertTrue($french_node->isPublished());
     $this->assertEqual($french_node->getTitle(), 'Translated node', 'The default revision of the published translation remains the same.');
 
@@ -152,7 +158,7 @@ class ModerationLocaleTest extends ModerationStateTestBase {
     $this->assertText(t('The moderation state has been updated.'));
     $english_node = $this->drupalGetNodeByTitle('Another node', TRUE);
     $french_node = $english_node->getTranslation('fr');
-    $this->assertEqual($french_node->moderation_state->value, 'published');
+    $this->assertEqual($french_node->moderation_state->target_id, 'published');
     $this->assertTrue($french_node->isPublished());
     $this->assertEqual($french_node->getTitle(), 'New draft of translated node', 'The draft has replaced the published revision.');
 
@@ -160,7 +166,7 @@ class ModerationLocaleTest extends ModerationStateTestBase {
     $this->drupalPostForm('node/' . $english_node->id() . '/edit', [], t('Save and Publish (this translation)'));
     $this->assertText(t('Article Another node has been updated.'));
     $english_node = $this->drupalGetNodeByTitle('Another node', TRUE);
-    $this->assertEqual($english_node->moderation_state->value, 'published');
+    $this->assertEqual($english_node->moderation_state->target_id, 'published');
 
     // Archive the node and its translation.
     $this->drupalPostForm('node/' . $english_node->id() . '/edit', [], t('Save and Archive (this translation)'));
@@ -169,9 +175,9 @@ class ModerationLocaleTest extends ModerationStateTestBase {
     $this->assertText(t('Article New draft of translated node has been updated.'));
     $english_node = $this->drupalGetNodeByTitle('Another node', TRUE);
     $french_node = $english_node->getTranslation('fr');
-    $this->assertEqual($english_node->moderation_state->value, 'archived');
+    $this->assertEqual($english_node->moderation_state->target_id, 'archived');
     $this->assertFalse($english_node->isPublished());
-    $this->assertEqual($french_node->moderation_state->value, 'archived');
+    $this->assertEqual($french_node->moderation_state->target_id, 'archived');
     $this->assertFalse($french_node->isPublished());
 
     // Create another article with its translation. This time publishing english
